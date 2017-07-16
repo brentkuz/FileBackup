@@ -26,15 +26,15 @@ namespace FileBackup.FileObserver
         private IBackupManager manager;
         private ILogger logger;
 
-        public PathObserver(string indexPath, int delay) : this(indexPath, delay, new BackupManager(indexPath), new Logger()) { }
-        public PathObserver(string indexPath, int delay, IBackupManager manager, ILogger logger)
+        public PathObserver(string indexPath, int delay) : this(indexPath, delay, new BackupManager(indexPath), new Logger(), new FileHelper()) { }
+        public PathObserver(string indexPath, int delay, IBackupManager manager, ILogger logger, IFileHelper fileHelper)
         {
             this.delay = delay;
             this.manager = manager;
             this.logger = logger;
-            if (File.Exists(indexPath))
+            if (fileHelper.Exists(indexPath))
             {
-                var file = File.ReadAllLines(indexPath);
+                var file = fileHelper.ReadAllLines(indexPath);
                 foreach (var f in file)
                 {
                     var parts = f.Split('\t');

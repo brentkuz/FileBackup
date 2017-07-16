@@ -2,9 +2,6 @@
 using FileBackup.Utility;
 using FileBackup.Utility.Hashing;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 
 namespace FileBackup.FileBackup
 {
@@ -22,23 +19,26 @@ namespace FileBackup.FileBackup
         private IRepository repos;
         private IIndex index;
         private IFileHelper fileHelper;
+        private IHashedFileFactory hashedFileFactory;
 
-        public BackupManager(string indexPath) : this(indexPath, new FileSystemRepository(), new FileHelper(), new Index(indexPath)) { }
-        public BackupManager(string indexPath, IRepository repos, IFileHelper fileHelper, IIndex index)
+        public BackupManager(string indexPath) 
+            : this(indexPath, new FileSystemRepository(), new FileHelper(), new Index(indexPath), new HashedFileFactory()) { }
+        public BackupManager(string indexPath, IRepository repos, IFileHelper fileHelper, IIndex index, IHashedFileFactory hashedFileFactory)
         {
             this.repos = repos;
             this.fileHelper = fileHelper;
             this.index = index;
-           
+            this.hashedFileFactory = hashedFileFactory;
         }
 
 
         public void ProcessChanged(Guid id, string filename)
         {
             //get paths
-            var fFile = new HashedFile(fileHelper.BuildPath(index.GetPath(id, PathType.Source), filename));
-            var bFile = new HashedFile(fileHelper.BuildPath(index.GetPath(id, PathType.Backup), filename));
+            var fFile = hashedFileFactory.Create(fileHelper.BuildPath(index.GetPath(id, PathType.Source), filename));
+            var bFile = hashedFileFactory.Create(fileHelper.BuildPath(index.GetPath(id, PathType.Backup), filename));
             //compare files and copy over if changed
+            var cmpr = fFile.CompareTo(bFile);
             if (fFile.CompareTo(bFile) != 0)
             {
                 Console.WriteLine("Changed: " + filename);
@@ -51,6 +51,8 @@ namespace FileBackup.FileBackup
             Console.WriteLine("Created: " + filename);
             var dest = fileHelper.BuildPath(index.GetPath(id, PathType.Backup), filename);
             var source = fileHelper.BuildPath(index.GetPath(id, PathType.Source), filename);
+            if (!fileHelper.Exists(source))
+                throw new Exception("BackupManager.ProcessCreated - Invalid source path");
             repos.Insert(source, dest);
         }
 
@@ -59,6 +61,8 @@ namespace FileBackup.FileBackup
             Console.WriteLine("Renamed: " + oldFilename + " -> " + newFilename);
             var oldPath = fileHelper.BuildPath(index.GetPath(id, PathType.Backup), oldFilename);
             var newPath = fileHelper.BuildPath(index.GetPath(id, PathType.Backup), newFilename);
+            if (!fileHelper.Exists(oldPath))
+                throw new Exception("BackupManager.ProcessRenamed - Invalid old path");
             repos.Rename(oldPath, newPath);
         }
 
@@ -66,6 +70,8 @@ namespace FileBackup.FileBackup
         {
             Console.WriteLine("Deleted: " + filename);
             var path = fileHelper.BuildPath(index.GetPath(id, PathType.Backup), filename);
+            if (!fileHelper.Exists(path))
+                throw new Exception("BackupManager.ProcessDeleted - Invalid delete target path");
             repos.Delete(path);
         }
 

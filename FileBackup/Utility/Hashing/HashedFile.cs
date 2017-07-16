@@ -13,12 +13,12 @@ namespace FileBackup.Utility.Hashing
         private string hash;
         private string path;
 
-        public HashedFile(string path) : this(path, new MD5Hash()) { }
-        public HashedFile(string path, IHashingStrategy alg)
+        public HashedFile(string path) : this(path, new MD5Hash(), new FileHelper()) { }
+        public HashedFile(string path, IHashingStrategy alg, IFileHelper fileHelper)
         {
-            if (!File.Exists(path))
+            if (!fileHelper.Exists(path))
                 throw new ArgumentException("HashedFile: Invalid path");
-            byte[] bytes = File.ReadAllBytes(path);
+            byte[] bytes = fileHelper.ReadAllBytes(path);
             hash = alg.GetHash(bytes);
             this.path = path; 
         }

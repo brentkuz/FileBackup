@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileBackup.Utility
 {
@@ -12,6 +9,9 @@ namespace FileBackup.Utility
         bool IsHidden(string path);
         string GetFilename(string path);
         string BuildPath(string root, string filename);
+        string[] ReadAllLines(string filePath);
+        byte[] ReadAllBytes(string filePath);
+        bool Exists(string filePath);
     }
     public class FileHelper : IFileHelper
     {
@@ -31,6 +31,18 @@ namespace FileBackup.Utility
         public string BuildPath(string root, string filename)
         {
             return root + "\\" + filename;
+        }
+        public string[] ReadAllLines(string filePath)
+        {
+            return File.ReadAllLines(filePath);
+        }
+        public byte[] ReadAllBytes(string filePath)
+        {
+            return File.ReadAllBytes(filePath);
+        }
+        public bool Exists(string filePath)
+        {
+            return File.Exists(filePath);
         }
     }
 }

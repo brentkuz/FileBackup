@@ -1,5 +1,6 @@
 ﻿//Class for accessing and maintaining the source index file.
 
+using FileBackup.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,14 +17,17 @@ namespace FileBackup.FileBackup
     {
         string GetPath(Guid id, PathType type);
     }
-    class Index : IIndex
+    public class Index : IIndex
     {
         private Dictionary<Guid, string[]> index = new Dictionary<Guid, string[]>();
 
-        public Index(string indexPath)
+        public Index(string indexPath) : this(indexPath, new FileHelper()) { }
+        public Index(string indexPath, IFileHelper fileHelper)
         {
+            if (!fileHelper.Exists(indexPath))
+                throw new ArgumentException("Index - Index path is invalid");
             //create binding lookup
-            var file = File.ReadAllLines(indexPath);
+            var file = fileHelper.ReadAllLines(indexPath);
             foreach (var f in file)
             {
                 var parts = f.Split('\t');
