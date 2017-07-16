@@ -1,0 +1,13 @@
+On Changed
+--------------------------------------------
+- recreate hash
+- compare new hash to saved hash
+	- if different
+		- transfer to repos
+- save new hash
+
+
+On Created
+--------------------------------------------
+- create and save hash
+- transfer to repos
