@@ -11,6 +11,12 @@ using FileBackup.Utility.Hashing;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using Microsoft.Practices.Unity;
+using FileBackup.FileBackup.Factories;
+using FileBackup.FileBackup.Repository;
+using FileBackup.FileObserver.Factories;
+using FileBackup.Utility.Factories;
+using FileBackup.FileBackup;
 
 namespace FileBackup
 {
@@ -18,23 +24,40 @@ namespace FileBackup
     {
         static void Main(string[] args)
         {
+            var container = new UnityContainer();
+            //factories
+            container.RegisterType<IBackupManagerFactory, BackupManagerFactory>();
+            container.RegisterType<IIndexFactory, IndexFactory>();
+            container.RegisterType<IRepositoryFactory, RepositoryFactory>();
+            container.RegisterType<IPathSubjectFactory, PathSubjectFactory>();
+            container.RegisterType<IPathObserverFactory, PathObserverFactory>();
+            container.RegisterType<IHashedFileFactory, HashedFileFactory>();
+            //classes
+            container.RegisterType<IBackupManager, BackupManager>();
+            container.RegisterType<IIndex, Index>();
+            container.RegisterType<IPathObserver, PathObserver>();
+            container.RegisterType<IPathSubject, PathSubject>();
+            container.RegisterType<IHashedFile, HashedFile>();
+            container.RegisterType<IFileHelper, FileHelper>();
+            container.RegisterType<ILogger, Logger>();
+
+            
+
             string INDEX = ConfigurationManager.AppSettings["indexFileName"];
             int delay = Convert.ToInt16(ConfigurationManager.AppSettings["delayTime"]);
             var path = GetProjectDir() + INDEX;
 
-            
-           
-            Run(path, delay);
-
+            //start and run until closed
+            var obsFact = container.Resolve<IPathObserverFactory>();
+            Run(obsFact, path, delay, RepositoryType.File);
             Thread.Sleep(Timeout.Infinite);
         }
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-        public static void Run(string path, int delay)
-        {
-            var obs = new PathObserver(path, delay);           
+        public static void Run(IPathObserverFactory fact, string path, int delay, RepositoryType type)
+        {            
+            var obs = fact.GetPathObserver(path, delay, type);           
         }
-
 
         private static string GetProjectDir()
         {

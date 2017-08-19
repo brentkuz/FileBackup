@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FileBackup.Utility.Hashing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileBackup.Utility.Hashing
+namespace FileBackup.Utility.Factories
 {
     public interface IHashedFileFactory
     {
@@ -15,7 +16,8 @@ namespace FileBackup.Utility.Hashing
     {
         public IHashedFile Create(string path)
         {
-            return new HashedFile(path);
+            //TODO: Inject
+            return new HashedFile(path, new MD5Hash(), new FileHelper());
         }
     }
 }

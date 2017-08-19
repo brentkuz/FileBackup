@@ -24,12 +24,13 @@ namespace FileBackup.FileObserver
         private IPathObserver observer;
         private IFileHelper fileHelper;
 
-        public PathSubject(Guid id, string path) : this(id, path, new FileHelper()) { }
-        public PathSubject(Guid id, string path, IFileHelper fileHelper)
+        
+        public PathSubject(Guid id, string path)
         {
+            //inject
+            fileHelper = new FileHelper();
             this.id = id;
             this.path = path;
-            this.fileHelper = fileHelper;
             WireUp();
         }
 

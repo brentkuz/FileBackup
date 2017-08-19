@@ -2,6 +2,7 @@
 
 using FileBackup.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,15 +14,16 @@ namespace FileBackup.FileBackup
         Source = 0,
         Backup = 1
     }
-    public interface IIndex
+    public interface IIndex 
     {
+        Dictionary<Guid, string[]> Values();
         string GetPath(Guid id, PathType type);
     }
     public class Index : IIndex
     {
         private Dictionary<Guid, string[]> index = new Dictionary<Guid, string[]>();
 
-        public Index(string indexPath) : this(indexPath, new FileHelper()) { }
+       
         public Index(string indexPath, IFileHelper fileHelper)
         {
             if (!fileHelper.Exists(indexPath))
@@ -33,7 +35,13 @@ namespace FileBackup.FileBackup
                 var parts = f.Split('\t');
                 index.Add(new Guid(parts[0]), new string[] { parts[1], parts[2] });
             }
-        }    
+        }
+
+        public Dictionary<Guid, string[]> Values()
+        {
+            return index;
+        }
+
         public string GetPath(Guid id, PathType type)
         {
             if (!index.Keys.Contains(id))

@@ -13,7 +13,7 @@ namespace FileBackup.Utility.Hashing
         private string hash;
         private string path;
 
-        public HashedFile(string path) : this(path, new MD5Hash(), new FileHelper()) { }
+       
         public HashedFile(string path, IHashingStrategy alg, IFileHelper fileHelper)
         {
             if (!fileHelper.Exists(path))

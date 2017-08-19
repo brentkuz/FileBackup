@@ -17,13 +17,6 @@ namespace FileBackup.FileBackup.Repository
 
     public class FileSystemRepository : IRepository
     {
-
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Insert(string sourcePath, string destPath)
         {
             if (!File.Exists(sourcePath))
@@ -49,6 +42,13 @@ namespace FileBackup.FileBackup.Repository
             if (!File.Exists(oldPath))
                 throw new ArgumentException("FileRepository.Delete - Invalid path");
             File.Move(oldPath, newPath);
+        }
+
+
+
+        public void Dispose()
+        {
+            return;
         }
     }
 }

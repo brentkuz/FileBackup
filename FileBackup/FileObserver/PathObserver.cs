@@ -1,4 +1,6 @@
 ﻿using FileBackup.FileBackup;
+using FileBackup.FileBackup.Factories;
+using FileBackup.FileObserver.Factories;
 using FileBackup.Utility;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace FileBackup.FileObserver
 {
+
     public interface IPathObserver : IDisposable
     {
         void Update(Guid id, string path, ChangeType.Type changeType, params object[] list);
@@ -25,30 +28,29 @@ namespace FileBackup.FileObserver
         private List<IPathSubject> subs = new List<IPathSubject>();
         private IBackupManager manager;
         private ILogger logger;
+       
 
-        public PathObserver(string indexPath, int delay) : this(indexPath, delay, new BackupManager(indexPath), new Logger(), new FileHelper()) { }
-        public PathObserver(string indexPath, int delay, IBackupManager manager, ILogger logger, IFileHelper fileHelper)
+        //public PathObserver(string indexPath, int delay, RepositoryType reposType) : this(indexPath, delay, reposType, new IndexFactory(), new BackupManagerFactory(), new Logger(), new FileHelper(), new PathSubjectFactory()) { }
+        public PathObserver(string indexPath, int delay, RepositoryType reposType, IIndexFactory indexFactory, IBackupManagerFactory backupFactory,
+            ILogger logger, IFileHelper fileHelper, IPathSubjectFactory pathSubjectFactory)
         {
             this.delay = delay;
-            this.manager = manager;
+            var index = indexFactory.GetIndex(indexPath);
+            this.manager = backupFactory.GetBackupManager(index, reposType);
             this.logger = logger;
-            if (fileHelper.Exists(indexPath))
+           
+            foreach (var i in index.Values())
             {
-                var file = fileHelper.ReadAllLines(indexPath);
-                foreach (var f in file)
+                var parts = i.Value;
+                if(!Directory.Exists(parts[0]) || !Directory.Exists(parts[1]))
                 {
-                    var parts = f.Split('\t');
-                    if(!Directory.Exists(parts[1]) || !Directory.Exists(parts[2]))
-                    {
-                        logger.Log(System.Diagnostics.EventLogEntryType.Warning, null, new ArgumentException("Could not create binding to path: " + parts[1]));
-                        continue;
-                    }
-                    var sub = new PathSubject(new Guid(parts[0]), parts[1]);
-                    Attach(sub);
+                    logger.Log(System.Diagnostics.EventLogEntryType.Warning, null, new ArgumentException("Could not create binding to path: " + parts[1]));
+                    continue;
                 }
+                var sub = pathSubjectFactory.GetPathSubject(i.Key, parts[0]);
+                Attach(sub);
             }
-            else            
-                throw new ArgumentException("The provided path is not valid.");
+            
         }
 
         public bool Disposed { get { return disposed; } }

@@ -1,5 +1,7 @@
-﻿using FileBackup.FileBackup.Repository;
+﻿using FileBackup.FileBackup.Factories;
+using FileBackup.FileBackup.Repository;
 using FileBackup.Utility;
+using FileBackup.Utility.Factories;
 using FileBackup.Utility.Hashing;
 using System;
 
@@ -21,11 +23,10 @@ namespace FileBackup.FileBackup
         private IFileHelper fileHelper;
         private IHashedFileFactory hashedFileFactory;
 
-        public BackupManager(string indexPath) 
-            : this(indexPath, new FileSystemRepository(), new FileHelper(), new Index(indexPath), new HashedFileFactory()) { }
-        public BackupManager(string indexPath, IRepository repos, IFileHelper fileHelper, IIndex index, IHashedFileFactory hashedFileFactory)
+
+        public BackupManager(IRepositoryFactory reposFactory, IFileHelper fileHelper, IIndex index, IHashedFileFactory hashedFileFactory, RepositoryType type)
         {
-            this.repos = repos;
+            this.repos = reposFactory.GetRepository(type);
             this.fileHelper = fileHelper;
             this.index = index;
             this.hashedFileFactory = hashedFileFactory;
