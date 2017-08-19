@@ -40,6 +40,7 @@ namespace FileBackup
             container.RegisterType<IHashedFile, HashedFile>();
             container.RegisterType<IFileHelper, FileHelper>();
             container.RegisterType<ILogger, Logger>();
+            container.RegisterType<IHashingStrategy, MD5Hash>();
 
             
 

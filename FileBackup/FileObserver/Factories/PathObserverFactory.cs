@@ -14,9 +14,22 @@ namespace FileBackup.FileObserver.Factories
     }
     public class PathObserverFactory : IPathObserverFactory
     {
+        private IIndexFactory indexFactory;
+        private IBackupManagerFactory backupFactory;
+        private ILogger logger;
+        private IFileHelper fileHelper;
+        private IPathSubjectFactory pathSubjectFactory;
+        public PathObserverFactory(IIndexFactory indexFactory, IBackupManagerFactory backupFactory, ILogger logger, IFileHelper fileHelper, IPathSubjectFactory pathSubjectFactory)
+        {
+            this.indexFactory = indexFactory;
+            this.backupFactory = backupFactory;
+            this.logger = logger;
+            this.fileHelper = fileHelper;
+            this.pathSubjectFactory = pathSubjectFactory;
+        }
         public IPathObserver GetPathObserver(string indexPath, int delay, RepositoryType reposType)
         {
-            return new PathObserver(indexPath, delay, reposType, new IndexFactory(), new BackupManagerFactory(), new Logger(), new FileHelper(), new PathSubjectFactory());
+            return new PathObserver(indexPath, delay, reposType, indexFactory, backupFactory, logger, fileHelper, pathSubjectFactory);
         }
     }
 }

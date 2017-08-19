@@ -14,10 +14,15 @@ namespace FileBackup.FileBackup.Factories
 
     public class IndexFactory : IIndexFactory
     {
+        private IFileHelper fileHelper;
+        public IndexFactory(IFileHelper fileHelper)
+        {
+            this.fileHelper = fileHelper;
+        }
         public IIndex GetIndex(string indexPath)
         {
             //TODO: Inject
-            return new Index(indexPath, new FileHelper());
+            return new Index(indexPath, fileHelper);
         }
     }
 }

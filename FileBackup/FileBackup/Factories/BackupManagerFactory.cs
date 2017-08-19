@@ -16,10 +16,19 @@ namespace FileBackup.FileBackup.Factories
 
     public class BackupManagerFactory : IBackupManagerFactory
     {
+        private IRepositoryFactory reposFactory;
+        private IFileHelper fileHelper;
+        private IHashedFileFactory hashedFileFactory;
+        public BackupManagerFactory(IRepositoryFactory reposFactory, IFileHelper fileHelper, IHashedFileFactory hashedFileFactory)
+        {
+            this.reposFactory = reposFactory;
+            this.fileHelper = fileHelper;
+            this.hashedFileFactory = hashedFileFactory;
+        }
         public IBackupManager GetBackupManager(IIndex index, RepositoryType reposType)
         {
             //TODO: inject
-            return new BackupManager(new RepositoryFactory(), new FileHelper(),index, new HashedFileFactory(), reposType);
+            return new BackupManager(reposFactory, fileHelper,index, hashedFileFactory, reposType);
         }
     }
 }

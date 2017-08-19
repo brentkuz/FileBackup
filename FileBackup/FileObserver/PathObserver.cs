@@ -29,8 +29,7 @@ namespace FileBackup.FileObserver
         private IBackupManager manager;
         private ILogger logger;
        
-
-        //public PathObserver(string indexPath, int delay, RepositoryType reposType) : this(indexPath, delay, reposType, new IndexFactory(), new BackupManagerFactory(), new Logger(), new FileHelper(), new PathSubjectFactory()) { }
+               
         public PathObserver(string indexPath, int delay, RepositoryType reposType, IIndexFactory indexFactory, IBackupManagerFactory backupFactory,
             ILogger logger, IFileHelper fileHelper, IPathSubjectFactory pathSubjectFactory)
         {

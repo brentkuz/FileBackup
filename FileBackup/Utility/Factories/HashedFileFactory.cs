@@ -14,10 +14,17 @@ namespace FileBackup.Utility.Factories
 
     public class HashedFileFactory : IHashedFileFactory
     {
+        private IHashingStrategy hash;
+        private IFileHelper fileHelper;
+        public HashedFileFactory(IHashingStrategy hash, IFileHelper fileHelper)
+        {
+            this.hash = hash;
+            this.fileHelper = fileHelper;
+        }
         public IHashedFile Create(string path)
         {
             //TODO: Inject
-            return new HashedFile(path, new MD5Hash(), new FileHelper());
+            return new HashedFile(path, hash, fileHelper);
         }
     }
 }
