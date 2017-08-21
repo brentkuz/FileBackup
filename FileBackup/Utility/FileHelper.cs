@@ -17,8 +17,7 @@ namespace FileBackup.Utility
     {
         public bool IsHidden(string path)
         {
-            FileInfo fi = new FileInfo(path);
-            return fi.Attributes.HasFlag(FileAttributes.Hidden);
+            return (File.GetAttributes(path) & FileAttributes.Hidden) == FileAttributes.Hidden;
         }
         public string GetFilename(string path)
         {

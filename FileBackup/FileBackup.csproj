@@ -76,6 +76,7 @@
     <Compile Include="Utility\Factories\HashedFileFactory.cs" />
     <Compile Include="Utility\Hashing\HashingStrategy.cs" />
     <Compile Include="Utility\Logger.cs" />
+    <Compile Include="Utility\UnityContainerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

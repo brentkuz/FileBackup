@@ -64,8 +64,9 @@ namespace FileBackup.FileObserver
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            
             var type = e.ChangeType.ToString().ToChangeType();
-            if (IsValid(e.FullPath) || type == ChangeType.Type.Deleted)
+            if (type == ChangeType.Type.Deleted || IsValid(e.FullPath))
             {                
                 Notify(fileHelper.GetFilename(e.FullPath), type);
             }
@@ -101,6 +102,8 @@ namespace FileBackup.FileObserver
         //}
         private bool IsValid(string path)
         {
+            if (!File.Exists(path))
+                return false;
             //file validation goes here
             return !fileHelper.IsHidden(path);
         }
