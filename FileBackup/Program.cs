@@ -1,4 +1,7 @@
-﻿using FileBackup.FileObserver;
+﻿//Author: Brent Kuzmanich
+//Comment: Main app entry point
+
+using FileBackup.FileObserver;
 using FileBackup.Utility;
 using System;
 using System.Collections.Generic;
@@ -24,25 +27,9 @@ namespace FileBackup
     {
         static void Main(string[] args)
         {
+            //init
             var container = new UnityContainer();
-            //factories
-            container.RegisterType<IBackupManagerFactory, BackupManagerFactory>();
-            container.RegisterType<IIndexFactory, IndexFactory>();
-            container.RegisterType<IRepositoryFactory, RepositoryFactory>();
-            container.RegisterType<IPathSubjectFactory, PathSubjectFactory>();
-            container.RegisterType<IPathObserverFactory, PathObserverFactory>();
-            container.RegisterType<IHashedFileFactory, HashedFileFactory>();
-            //classes
-            container.RegisterType<IBackupManager, BackupManager>();
-            container.RegisterType<IIndex, Index>();
-            container.RegisterType<IPathObserver, PathObserver>();
-            container.RegisterType<IPathSubject, PathSubject>();
-            container.RegisterType<IHashedFile, HashedFile>();
-            container.RegisterType<IFileHelper, FileHelper>();
-            container.RegisterType<ILogger, Logger>();
-            container.RegisterType<IHashingStrategy, MD5Hash>();
-
-            
+            RegisterContainer(container);            
 
             string INDEX = ConfigurationManager.AppSettings["indexFileName"];
             int delay = Convert.ToInt16(ConfigurationManager.AppSettings["delayTime"]);
@@ -69,6 +56,25 @@ namespace FileBackup
                 dir = dir.Substring(0, bin);
             }
             return dir;
+        }
+        private static void RegisterContainer(UnityContainer container)
+        {
+            //factories
+            container.RegisterType<IBackupManagerFactory, BackupManagerFactory>();
+            container.RegisterType<IIndexFactory, IndexFactory>();
+            container.RegisterType<IRepositoryFactory, RepositoryFactory>();
+            container.RegisterType<IPathSubjectFactory, PathSubjectFactory>();
+            container.RegisterType<IPathObserverFactory, PathObserverFactory>();
+            container.RegisterType<IHashedFileFactory, HashedFileFactory>();
+            //classes
+            container.RegisterType<IBackupManager, BackupManager>();
+            container.RegisterType<IIndex, Index>();
+            container.RegisterType<IPathObserver, PathObserver>();
+            container.RegisterType<IPathSubject, PathSubject>();
+            container.RegisterType<IHashedFile, HashedFile>();
+            container.RegisterType<IFileHelper, FileHelper>();
+            container.RegisterType<ILogger, Logger>();
+            container.RegisterType<IHashingStrategy, MD5Hash>();
         }
     }
 }

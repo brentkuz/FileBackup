@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//Author: Brent Kuzmanich
+//Comment: File system repository for persisting changes to source files
+
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileBackup.FileBackup.Repository
 {
@@ -17,12 +16,14 @@ namespace FileBackup.FileBackup.Repository
 
     public class FileSystemRepository : IRepository
     {
+        //Add file to dest path
         public void Insert(string sourcePath, string destPath)
         {
             if (!File.Exists(sourcePath))
                 throw new ArgumentException("FileRepository.Insert - Invalid source path");
             File.Copy(sourcePath, destPath, false);
         }
+        //Copy over changes to dest 
         public void Update(string sourcePath, string destPath)
         {
             if (!File.Exists(sourcePath))
@@ -31,12 +32,14 @@ namespace FileBackup.FileBackup.Repository
                 throw new ArgumentException("FileRepository.Update - Invalid destination path");
             File.Copy(sourcePath, destPath, true);
         }
+        //Delete file at path
         public void Delete(string path)
         {
             if (!File.Exists(path))
                 throw new ArgumentException("FileRepository.Delete - Invalid path");
             File.Delete(path);
         }
+        //Update name
         public void Rename(string oldPath, string newPath)
         {
             if (!File.Exists(oldPath))

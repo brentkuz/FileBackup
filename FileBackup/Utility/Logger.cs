@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Author: Brent Kuzmanich
+//Comment: Class for logging excetions to event logs
+
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Text;

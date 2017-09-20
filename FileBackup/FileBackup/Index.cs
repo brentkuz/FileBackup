@@ -1,4 +1,6 @@
-﻿//Class for accessing and maintaining the source index file.
+﻿//Author: Brent Kuzmanich
+//Comment: Abstraction of the source.idx file used for resolving
+//source to destination and vice versa.
 
 using FileBackup.Utility;
 using System;
@@ -21,14 +23,14 @@ namespace FileBackup.FileBackup
     }
     public class Index : IIndex
     {
+        //Key: Guid; Value: string[] {source, backup}
         private Dictionary<Guid, string[]> index = new Dictionary<Guid, string[]>();
-
-       
+        
         public Index(string indexPath, IFileHelper fileHelper)
         {
             if (!fileHelper.Exists(indexPath))
                 throw new ArgumentException("Index - Index path is invalid");
-            //create binding lookup
+            //create lookup
             var file = fileHelper.ReadAllLines(indexPath);
             foreach (var f in file)
             {
@@ -42,6 +44,7 @@ namespace FileBackup.FileBackup
             return index;
         }
 
+        //Resolve path
         public string GetPath(Guid id, PathType type)
         {
             if (!index.Keys.Contains(id))

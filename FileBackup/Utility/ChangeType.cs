@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileBackup.Utility
 {
@@ -18,6 +14,7 @@ namespace FileBackup.Utility
             Renamed
         }
 
+        //Resolve string to ChangeType
         public static Type ToChangeType(this string type)
         {            
             Type res;

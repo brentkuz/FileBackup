@@ -1,4 +1,7 @@
-﻿using FileBackup.FileBackup;
+﻿//Author: Brent Kuzmanich
+//Comment: Observer for handling events thrown by path subjects
+
+using FileBackup.FileBackup;
 using FileBackup.FileBackup.Factories;
 using FileBackup.FileObserver.Factories;
 using FileBackup.Utility;
@@ -38,6 +41,7 @@ namespace FileBackup.FileObserver
             this.manager = backupFactory.GetBackupManager(index, reposType);
             this.logger = logger;
            
+            //Create path subjects
             foreach (var i in index.Values())
             {
                 var parts = i.Value;
@@ -48,17 +52,17 @@ namespace FileBackup.FileObserver
                 }
                 var sub = pathSubjectFactory.GetPathSubject(i.Key, parts[0]);
                 Attach(sub);
-            }
-            
+            }            
         }
 
         public bool Disposed { get { return disposed; } }
 
+        //Event handler for path subjects notifications
         public void Update(Guid id, string path, ChangeType.Type changeType, params object[] list)
         {
             try
             {
-                //delay execution to prevent "File in use..." error
+                //Delay execution to prevent "File in use..." error
                 Thread.Sleep(delay);
                 switch (changeType)
                 {
@@ -93,8 +97,6 @@ namespace FileBackup.FileObserver
                             var msg = "The file backup binding was disposed for path: " + path;
                             logger.Log(System.Diagnostics.EventLogEntryType.Warning, msg);
 
-                            //TODO: Attempt restart for path
-
                             break;
                         }
                 }
@@ -106,12 +108,12 @@ namespace FileBackup.FileObserver
             }
         }
 
+        //Attach path subj to instance
         public void Attach(IPathSubject sub)
         {
             sub.SetObserver(this);
             subs.Add(sub);
         }
-
 
         #region IDisposable      
         protected void Dispose(bool disposing)

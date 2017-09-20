@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Author: Brent Kuzmanich
+//Comment: Collection of methods for working with file system
+
+using System;
 using System.IO;
 using System.Linq;
 

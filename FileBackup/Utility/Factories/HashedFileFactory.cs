@@ -1,4 +1,7 @@
-﻿using FileBackup.Utility.Hashing;
+﻿//Author: Brent Kuzmanich
+//Comment: Factory for DI
+
+using FileBackup.Utility.Hashing;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,10 +1,9 @@
-﻿using FileBackup.Utility;
+﻿//Author: Brent Kuzmanich
+//Comment: Subject to monitor events for the given path
+
+using FileBackup.Utility;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileBackup.FileObserver
 {
@@ -12,7 +11,6 @@ namespace FileBackup.FileObserver
     {
         void SetObserver(IPathObserver observer);
     }
-
 
     public class PathSubject : IPathSubject
     {      
@@ -25,46 +23,46 @@ namespace FileBackup.FileObserver
         private IFileHelper fileHelper;
 
         
-        public PathSubject(Guid id, string path)
+        public PathSubject(Guid id, string path, IFileHelper fileHelper)
         {
-            //inject
-            fileHelper = new FileHelper();
+            this.fileHelper = fileHelper;
             this.id = id;
             this.path = path;
             WireUp();
         }
-
-
+                
         public void SetObserver(IPathObserver observer)
         {
             this.observer = observer;
         }
 
+        //Wireup FileSystemWatcher events
         private void WireUp()
         {
             watcher.Path = path;
             watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
               | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             
-            // Add event handlers.
+            // Add event handlers
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.Created += new FileSystemEventHandler(OnChanged);
             watcher.Deleted += new FileSystemEventHandler(OnChanged);
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
             watcher.Error += new ErrorEventHandler(OnError);
             
-            // Begin watching.
+            // Begin watching
             watcher.EnableRaisingEvents = true;
         }
 
+        //Notify observer on event
         private void Notify(string path, ChangeType.Type eventType, params object[] list)
         {
             observer.Update(id: id, path: path, changeType: eventType, list: list);
         }
 
+        //Handle OnChanged, OnCreated, and OnDeleted
         private void OnChanged(object source, FileSystemEventArgs e)
-        {
-            
+        {            
             var type = e.ChangeType.ToString().ToChangeType();
             if (type == ChangeType.Type.Deleted || IsValid(e.FullPath))
             {                
@@ -72,6 +70,7 @@ namespace FileBackup.FileObserver
             }
         }
 
+        //Handle OnRenamed
         private void OnRenamed(object source, RenamedEventArgs e)
         {
             if (IsValid(e.FullPath))
@@ -81,6 +80,7 @@ namespace FileBackup.FileObserver
             }
         }
 
+        //Handle Error
         private void OnError(object source, ErrorEventArgs e)
         {            
             if (retries < 10)
@@ -96,18 +96,15 @@ namespace FileBackup.FileObserver
                 Notify(path, ChangeType.Type.Error, new object[] { ex });
             }            
         }
-        //private bool IsDuplicateEvent(string path)
-        //{
-            
-        //}
+
+        //Validate event target - Exists and not hidden
         private bool IsValid(string path)
         {
             if (!File.Exists(path))
                 return false;
             //file validation goes here
             return !fileHelper.IsHidden(path);
-        }
-        
+        }        
 
         #region IDisposable
         protected void Dispose(bool disposing)

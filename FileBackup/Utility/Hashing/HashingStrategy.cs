@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Author: Brent Kuzmanich
+//Comment: Hash function implementation
+
+using System;
 using System.Security.Cryptography;
 using System.Text;
 

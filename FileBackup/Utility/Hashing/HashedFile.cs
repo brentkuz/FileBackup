@@ -1,4 +1,8 @@
-﻿using System;
+﻿//Author: Brent Kuzmanich
+//Comment: Abstraction of a file to include hashing and 
+//comparison functionality.
+
+using System;
 using System.IO;
 
 namespace FileBackup.Utility.Hashing

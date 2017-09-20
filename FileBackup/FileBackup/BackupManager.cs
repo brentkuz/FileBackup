@@ -1,4 +1,8 @@
-﻿using FileBackup.FileBackup.Factories;
+﻿//Author: Brent Kuzmanich
+//Comment: Service class for determining what persistence actions
+// need to be taken.
+
+using FileBackup.FileBackup.Factories;
 using FileBackup.FileBackup.Repository;
 using FileBackup.Utility;
 using FileBackup.Utility.Factories;
@@ -32,7 +36,7 @@ namespace FileBackup.FileBackup
             this.hashedFileFactory = hashedFileFactory;
         }
 
-
+        //OnChange - Compare file hashes and persist if changed.
         public void ProcessChanged(Guid id, string filename)
         {
             //get paths
@@ -47,6 +51,7 @@ namespace FileBackup.FileBackup
             }
         }
 
+        //OnCreated - Copy source file to destination path
         public void ProcessCreated(Guid id, string filename)
         {
             Console.WriteLine("Created: " + filename);
@@ -57,6 +62,7 @@ namespace FileBackup.FileBackup
             repos.Insert(source, dest);
         }
 
+        //OnRenamed - persist name change
         public void ProcessRenamed(Guid id, string newFilename, string oldFilename)
         {
             Console.WriteLine("Renamed: " + oldFilename + " -> " + newFilename);
@@ -67,6 +73,7 @@ namespace FileBackup.FileBackup
             repos.Rename(oldPath, newPath);
         }
 
+        //OnDeleted - delete backup file
         public void ProcessDeleted(Guid id, string filename)
         {
             Console.WriteLine("Deleted: " + filename);
